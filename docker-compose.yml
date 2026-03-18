@@ -1,0 +1,24 @@
+version: "3.9"
+
+services:
+
+  tfserving:
+    image: tensorflow/serving
+    container_name: tfserving
+    ports:
+      - "8501:8501"
+    volumes:
+      - ./model:/models
+    environment:
+      - MODEL_NAME=cat_dog_model_TF
+    command: >
+      --model_base_path=/models/cat_dog_model_TF
+      --rest_api_port=8501
+
+  fastapi:
+    build: ./app
+    container_name: fastapi_app
+    ports:
+      - "8000:8000"
+    depends_on:
+      - tfserving
